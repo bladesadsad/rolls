@@ -1,5 +1,6 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit
+from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QLineEdit, QMessageBox
+from PyQt6.QtCore import Qt
 import random
 
 class DiceRollSimulator(QWidget):
@@ -32,6 +33,20 @@ class DiceRollSimulator(QWidget):
 
         self.setLayout(self.layout)
 
+        # Подключаем слот для проверки ввода
+        self.num_dice_input.textChanged.connect(self.validateInput)
+        self.num_rolls_input.textChanged.connect(self.validateInput)
+
+    def validateInput(self):
+        sender = self.sender()
+        if sender.text() and not sender.text().isdigit():
+            sender.clear()
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setText("Пожалуйста, введите только цифры.")
+            msg.setWindowTitle("Ошибка ввода")
+            msg.exec()
+
     def simulateDiceRoll(self):
         num_dice = int(self.num_dice_input.text())
         num_rolls = int(self.num_rolls_input.text())
@@ -40,12 +55,10 @@ class DiceRollSimulator(QWidget):
         for _ in range(num_rolls):
             total = sum(random.randint(1, 6) for _ in range(num_dice))
             results[total] = results.get(total, 0) + 1
-
         output = ''
         for key in sorted(results.keys()):
             percentage = (results[key] / num_rolls) * 100
             output += f"Сумма {key}: {percentage:.2f}%\n"
-
         self.result_label.setText(output)
 
 if __name__ == '__main__':
