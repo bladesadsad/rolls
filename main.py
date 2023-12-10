@@ -32,8 +32,7 @@ class DiceRollSimulator(QWidget):
         self.layout.addWidget(self.result_label)
 
         self.setLayout(self.layout)
-
-        # Подключаем слот для проверки ввода
+        
         self.num_dice_input.textChanged.connect(self.validateInput)
         self.num_rolls_input.textChanged.connect(self.validateInput)
 
